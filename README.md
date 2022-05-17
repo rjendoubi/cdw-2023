@@ -399,7 +399,10 @@ Run the explain and query rewrite should show like:
 
 Cloudera Iceberg is a high-performance format for huge analytic tables for engines like Spark, Impala Flink and Hive to safely work with the same tables, at the same time. 
 
-Creatint a partitioned table with CREATE TABLE ... PARTITIONED BY & STORED BY ICEBERY syntax enables you to create identity-partitioned Iceberg tables. Identity-partitioned Iceberg tables are similar to the regular partitioned tables and are stored in the same directory structure as the regular partitioned tables. 
+Creatint a partitioned table with CREATE TABLE ... PARTITIONED BY & STORED BY ICEBERG
+syntax enables you to create identity-partitioned Iceberg tables. Identity-partitioned
+Iceberg tables are similar to the regular partitioned tables and are stored in the
+same directory structure as the regular partitioned tables. 
 
 Lets create a new table with Iceberg format and insert rows in batches:
 

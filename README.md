@@ -432,10 +432,8 @@ from flights_orc where year not in (1995);
 No we all rows with three inserts in the table, and can show the snapshots.
 
 First check the rows in the table. 
-Note* - currently we must disable the vectorized execution in Hive 
 
 ```sql
-set hive.vectorized.execution.enabled = false;
 select count(*) from flights_ice;
 ```
 

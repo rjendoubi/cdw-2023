@@ -57,21 +57,21 @@ CREATE EXTERNAL TABLE flights_csv(month int, dayofmonth int,
  carrierdelay int, weatherdelay int, nasdelay int, securitydelay int, 
 lateaircraftdelay int) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' 
-STORED AS TEXTFILE LOCATION '/airlinedata-csv/flights' tblproperties("skip.header.line.count"="1");
+STORED AS TEXTFILE LOCATION '/test-data/cdw-hol/airlinedata-csv/flights' tblproperties("skip.header.line.count"="1");
 
 drop table if exists planes_csv;
 CREATE EXTERNAL TABLE planes_csv(tailnum string, owner_type string, manufacturer string, issue_date string, model string, status string, aircraft_type string, engine_type string, year int) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' 
-STORED AS TEXTFILE LOCATION '/airlinedata-csv/planes' tblproperties("skip.header.line.count"="1");
+STORED AS TEXTFILE LOCATION '/test-data/cdw-hol/airlinedata-csv/planes' tblproperties("skip.header.line.count"="1");
 
 drop table if exists airlines_csv;
 CREATE EXTERNAL TABLE airlines_csv(code string, description string) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' 
-STORED AS TEXTFILE LOCATION '/airlinedata-csv/airlines' tblproperties("skip.header.line.count"="1");
+STORED AS TEXTFILE LOCATION '/test-data/cdw-hol/airlinedata-csv/airlines' tblproperties("skip.header.line.count"="1");
 
 drop table if exists airports_csv;
 CREATE EXTERNAL TABLE airports_csv(iata string, airport string, city string, state DOUBLE, country string, lat DOUBLE, lon DOUBLE) 
 ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n' 
-STORED AS TEXTFILE LOCATION '/airlinedata-csv/airports' tblproperties("skip.header.line.count"="1");
+STORED AS TEXTFILE LOCATION '/test-data/cdw-hol/airlinedata-csv/airports' tblproperties("skip.header.line.count"="1");
 ```
 
 

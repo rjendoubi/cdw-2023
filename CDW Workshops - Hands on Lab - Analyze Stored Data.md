@@ -28,16 +28,15 @@ You have to set your **workload password**.
 
 -----
 ## Lab 1 - Create Database
-*Do all these steps as the* **“db\_user001”..”db\_user020”** *unless otherwise noted.*
+Navigate to Data Warehouse, then Virtual Warehouse and open the SQL Authoring tool HUE.
 
-Navigate to Data Warehouse, then Virtual Warehouse and open the SQL Authoring tool DAS or HUE.
- 
-Create new database for your user to be used, or use one that is already created for you.
+Create new database for your user to be used. The database name should start with `hol_`
+followed by your username, e.g. `hol_ryanjendoubi`.
 
 ```sql
 -- replace ** in database_name
-CREATE DATABASE DB_USER0**;
-USE DB_USER0**;
+CREATE DATABASE hol_**;
+USE hol_;
 
 ```
 

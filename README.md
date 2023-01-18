@@ -169,7 +169,7 @@ Run `CREATE TABLE AS SELECT` queries to create new versions of each table.
 These new versions will be stored internally the ORC file format, which will
 be more performant for BI use-cases.
 
-They will also support full (ACID)[https://en.wikipedia.org/wiki/ACID]
+They will also support full [ACID](https://en.wikipedia.org/wiki/ACID)
 transactions, making them safe to update while other users are querying them.
 
 *Do all these steps in your **hol\_\*\*** database unless otherwise noted.*

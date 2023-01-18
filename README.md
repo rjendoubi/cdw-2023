@@ -30,13 +30,12 @@ You have to set your **workload password**.
 Navigate to Data Warehouse, then Virtual Warehouse and open the SQL Authoring tool HUE.
 
 Create new database for your user to be used. The database name should start with `hol_`
-followed by your username, e.g. `hol_ryanjendoubi`.
+followed by your name, e.g. `hol_ryanj`.
 
 ```sql
 -- replace ** in database_name
 CREATE DATABASE hol_**;
-USE hol_;
-
+USE hol_**;
 ```
 
 -----
@@ -94,7 +93,7 @@ Results
 
 Run exploratory queries to understand the data. This reads the CSV data, converts it into a columnar in-memory format, and executes the query.
 
-NAME: Airline Delay Aggregate Metrics by Airplane
+### NAME: Airline Delay Aggregate Metrics by Airplane
 
 DESCRIPTION: Customer Experience Reporting showing airplanes that have the highest average delays, causing the worst customer experience.
 
@@ -123,10 +122,11 @@ GROUP BY tailnum
 ORDER BY avg_delay DESC;
 ```
 
-NAME: Engine Types Causing Most Delays
+### NAME: Engine Types Causing Most Delays
+
 DESCRIPTION: Ad Hoc Exploration to Investigate - Exploratory query to determine which engine type contributes to the most delayed flights.
 
-NOTE: If this returns no results, then remove the 'WHERE tailnum in …' clause
+NOTE: If this returns no results, then remove the `WHERE tailnum in …` clause
 
 
 ```sql
@@ -165,9 +165,14 @@ WHERE planes_csv.tailnum IN
 -----
 ## Lab 3 - Managed Tables
 
-Run “CREATE TABLE AS SELECT” queries to create full ACID ORC type of the tables. This creates curated versions of the data which are optimal for BI usage.
+Run `CREATE TABLE AS SELECT` queries to create new versions of each table.
+These new versions will be stored internally the ORC file format, which will
+be more performant for BI use-cases.
 
-*Do all these steps in the* **“db\_user001”..”db\_user020”** *unless otherwise noted.*
+They will also support full (ACID)[https://en.wikipedia.org/wiki/ACID]
+transactions, making them safe to update while other users are querying them.
+
+*Do all these steps in your **hol\_\*\*** database unless otherwise noted.*
 
 ```sql
 drop table if exists airlines_orc;
@@ -191,7 +196,7 @@ This takes a few minutes!
 Check that you created managed & external tables
 
 ```sql
-USE DB_USER0**;
+USE hol_**;
 SHOW TABLES;
 ```
 
@@ -211,10 +216,11 @@ Results
 |planes_orc|
 
 
+### Data caching
 
 Experiment with different queries to see effects of the data cache on each executor.
 
-Run query. Highlight both “SET …” and “SELECT …” when you execute.
+Run query. Highlight both `SET …` and `SELECT …` when you execute.
 
 ```sql
 SET hive.query.results.cache.enabled=false;
@@ -233,24 +239,29 @@ ORDER BY
   num_flights_cancelled DESC;
 ```
 
-Go to Queries page, then click on the query that just ran, then scroll down to DAG INFO,
-choose DAG COUNTERS, then filter for 'cache', then show CACHE_MISS_BYTES and/or CACHE_HIT_BYTES. 
-Take note of the query run time too.
+Go to the Jobs browser (accessible from the left-hand menu), and at the top,
+switch from the Jobs tab to the Queries tab if necessary. Find the query that
+just ran, and click into it (Note: sometimes it can take a few minutes for
+queries to be displayed in the UI). On the DAG Counters subtab, search for
+"cache" (Ctrl+F in your browser) and note the values for CACHE_MISS_BYTES
+and/or CACHE_HIT_BYTES. On the Query Info subtab, note the Duration for the
+query overall.
 
-Note:  sometimes it takes up to a few minutes for DAS to parse the query metrics and expose them in the UI.
+Now, run the same query again (from the `SELECT …` statement).
 
-Run query again.
 Check the cache metrics again to see the improved hit rate.
 
 
 -----
 ## Lab 4 - Materialized View
 
-*Do all these steps in the* **“db\_user001”..”db\_user020”** *unless otherwise noted.*
+*Do all these steps in your **hol\_\*\*** database unless otherwise noted.*
 
-Create materialized view (MV). This will cause Hive to transparently rewrite queries, when possible, to use the MV instead of the base tables.
+Create a materialized view (MV). This will cause Hive to transparently
+rewrite queries, when possible, to use the MV instead of the base tables.
 
-Add constraints for better query and refresh 
+Add constraints for more efficient query and refresh.
+
 ```sql
 ALTER TABLE airlines_orc ADD CONSTRAINT airlines_pk PRIMARY KEY (code) DISABLE NOVALIDATE;
 ALTER TABLE flights_orc ADD CONSTRAINT airlines_fk FOREIGN KEY (uniquecarrier) REFERENCES airlines_orc(code) DISABLE NOVALIDATE RELY;
@@ -259,25 +270,26 @@ ALTER TABLE flights_orc ADD CONSTRAINT airlines_fk FOREIGN KEY (uniquecarrier) R
 ```sql
 DROP MATERIALIZED VIEW IF EXISTS traffic_cancel_airlines
 CREATE MATERIALIZED VIEW traffic_cancel_airlines
-as SELECT airlines.code AS code,  MIN(airlines.description) AS description,
+AS SELECT airlines.code AS code,
+          MIN(airlines.description) AS description,
           flights.month AS month,
           sum(flights.cancelled) AS cancelled,
           count(flights.diverted) AS diverted
-FROM flights_orc flights JOIN airlines_orc airlines ON (flights.uniquecarrier = airlines.code)
+FROM flights_orc flights
+JOIN airlines_orc airlines ON (flights.uniquecarrier = airlines.code)
 group by airlines.code, flights.month;
 ```
 
-Modify the DB_USER0**
-
-Check that the Materialized view is created
+Check that the Materialized view is created (substitute your own
+database name).
 ```sql
-SHOW MATERIALIZED VIEWS in DB_USER0**;
+SHOW MATERIALIZED VIEWS in hol_**;
 ```
 
 
-### Incremental refresh the materialized View
+### Incrementally refresh the Materialized View
 
-*Do all these steps in the* **“db\_user001”..”db\_user020”** *unless otherwise noted.*
+*Do all these steps in your **hol\_\*\*** database unless otherwise noted.*
 
 First create a table for incremental data 
 
@@ -312,10 +324,9 @@ INSERT into flights_orc select * from flights_orc_incr;
 Update materialized view
 
 ```sql
-USE DB_USER001;
+USE hol_**;
 ALTER MATERIALIZED VIEW traffic_cancel_airlines REBUILD;
 ```
-
 
 Run dashboard query again to explore the usage of the MV. 
 
@@ -360,18 +371,20 @@ Finally merging these two tables with a single MERGE command to maintain the his
 
 Create the Hive managed table for our contacts. We track a start and end date.
 
-*Do all these steps in the* **“db\_user001”..”db\_user020”** *unless otherwise noted.*
+*Do all these steps in your **hol\_\*\*** database unless otherwise noted.*
 
 ```sql
 drop table if exists airlines_scd;
 create table airlines_scd(code string, description string, valid_from date, valid_to date);
 ```
 
-Load initial by copy 1000 rows of current airlines table into the airlimanaged table, We hard code the valid_from dates to the beginning of 2021
+Load initial by copy 1000 rows of current airlines table into the airlines
+managed table. We hard code the `valid_from` dates to the beginning of 2021.
 ```sql
 insert into airlines_scd select *, cast('2021-01-01' as date), cast(null as date) from airlines_csv limit 1000;
 ```
-Create an external table pointing to our complete airlines dataset (1491 records)
+Create an external table pointing to our complete airlines dataset (1491
+records).
 
 ```sql
 drop table if exists airlines_stage;
@@ -423,9 +436,7 @@ View the changed records
 select * from airlines_scd where code in ('02Q','04Q')
 ```
 
-
 Results
-
 
 |AIRLINES\_SCD.CODE|AIRLINES\_SCD.DESCRIPTION|AIRLINES\_SCD.VALID\_FROM|AIRLINES\_SCD.VALID\_TO|
 | :- | :- | :- | :- |
@@ -435,16 +446,19 @@ Results
 |04Q|SDC Demo Update|2021-05-26|null|
 
 
-
-
 -----
 ## Lab 6 - Data Security & Governance 
 
-The combination of the Data Warehouse with SDX offers a list of powerful features like rule-based masking columns based on a user’s role and/or group association or rule-based row filters. 
+The combination of the Data Warehouse with SDX offers powerful features
+like rule-based removal or masking of columns, or rule-based row filtering,
+based on a user's role and/or group association.
 
-For this workshop we are going to explore Attribute-Based Access Control a.k.a. Tage-based security policies.
+For this workshop we are going to explore Attribute-Based Access Control
+a.k.a. Tage-based security policies.
 
 First we are going to create a series of tables in your work database. 
+
+*Do all these steps in your **hol\_\*\*** database unless otherwise noted.*
 
 In the SQL editor, select your database and run this script:
 
@@ -489,13 +503,22 @@ select * from emp_all;
 
 … should give the contents of the emp\_all table, which only has a couple of lines of data.
 
-For the next step we will switch to the UI of Atlas, the CDP component responsible for metadata management and governance: in the Cloudera Data Warehouse *Overview* UI, select your Virtual Warehouse to highlight the associated Database Catalog. Click on the three-dot menu of this DB catalog and select “Open Atlas” in the associated pop-up menu:
+For the next step we will switch to the UI of Atlas, the CDP component
+responsible for metadata management and governance.
+
+In the Cloudera Data Warehouse *Overview* UI, select your Virtual Warehouse
+to highlight the associated _Database Catalog_ in the adjacent column. Click
+on the three-dot menu of this DB catalog and select "Open Atlas" in the
+associated pop-up menu:
 
 ![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.006.png)
 
-This should open the Atlas UI. CDP comes with a newer, improved user interface which can be enabled through the “Switch to Beta UI” link on the bottom right side of the screen. Do this now.
+This should open the Atlas UI. CDP comes with a newer, improved user interface
+which can be enabled through the “Switch to Beta UI” link on the bottom right
+side of the screen. Do this now.
 
-The Atlas UI has a left column which lists the Entities, Classifications, Business Metadata and Glossaries that belong to your CDP Environment.
+The Atlas UI has a left column which lists the Entities, Classifications,
+Business Metadata and Glossaries that belong to your CDP Environment.
 
 ![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.007.png)
 
@@ -542,12 +565,10 @@ In the Ranger UI, select the “Audit” menu and limit the amount of data displ
 -----
 ## Lab 7 - CDP Data Visualization
 
-
 Easily create rich, interactive dashboards that accelerate analytical insights across your enterprise.
 CDP Data Visualization enables data engineers, business analysts, and data scientists to quickly and easily explore data, collaborate, and share insights across the data lifecycle—from data ingest to data insights and beyond.
 
 Open DataViz 
-
 
 |**Step**|**Description**|||
 | :-: | :- | :- | :- |

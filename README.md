@@ -345,9 +345,10 @@ Disable materialized view rewrites
 ```sql
 ALTER MATERIALIZED VIEW traffic_cancel_airlines DISABLE REWRITE;
 ```
-Now repeat the first part of this step to see the different query plan, which no longer uses the MV.
+Now repeat the `SELECT` query immediately above to see the different query
+plan, which no longer uses the MV.
 
-Notice the difference in the explain 
+Notice the difference in the Visual Explain subtab.
 
 With query rewrite read the **materialized view** : 
 

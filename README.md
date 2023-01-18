@@ -268,7 +268,7 @@ ALTER TABLE flights_orc ADD CONSTRAINT airlines_fk FOREIGN KEY (uniquecarrier) R
 ```
 ### Create Materialized View
 ```sql
-DROP MATERIALIZED VIEW IF EXISTS traffic_cancel_airlines
+DROP MATERIALIZED VIEW IF EXISTS traffic_cancel_airlines;
 CREATE MATERIALIZED VIEW traffic_cancel_airlines
 AS SELECT airlines.code AS code,
           MIN(airlines.description) AS description,

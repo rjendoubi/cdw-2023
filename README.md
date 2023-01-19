@@ -564,16 +564,18 @@ In the Ranger UI, select the “Audit” menu and limit the amount of data displ
 
 
 -----
-## Lab 7 - CDP Data Visualization
+## Lab 7 - Cloudera Data Visualization
 
-Easily create rich, interactive dashboards that accelerate analytical insights across your enterprise.
-CDP Data Visualization enables data engineers, business analysts, and data scientists to quickly and easily explore data, collaborate, and share insights across the data lifecycle—from data ingest to data insights and beyond.
+Easily create rich, interactive dashboards that accelerate analytical insights
+across your enterprise. Cloudera Data Visualization enables data engineers,
+business analysts, and data scientists to quickly and easily explore data,
+collaborate, and share insights across the data lifecycle—from data ingest to
+data insights and beyond.
 
-Open DataViz 
 
 |**Step**|**Description**|||
 | :-: | :- | :- | :- |
-|1|<p>Open Data Visualization ![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.016.png)</p><p></p><p></p><p>SSO login as user with password (not prompted) </p><p></p>|
+|1|<p>Open Data Visualization ![](images/07_01_CDV-access.png)</p><p></p><p></p><p>SSO login as user with password (not prompted) </p><p></p>|
 |2|<p>Overview</p><p>![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.017.png)</p>|
 |3|<p>Switch to Data Tab</p><p>![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.018.png)</p><p>Initially will have no Data Models</p>|
 |4|<p>Upload Data - will create new table within the Database that you are connected to</p><p>![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.019.png)</p><p></p><p>![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.020.png)</p><p>Don’t need to execute this steps, but is great to show for Self Service analytics (Data Scientists & Data Analy</p><p>sts</p>|

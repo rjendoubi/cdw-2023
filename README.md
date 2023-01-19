@@ -1,6 +1,6 @@
 
 
-# CDW Workshops - vHoL  
+# CDW Workshop - Hands-on Lab
 
 Analyze Stored Data
 
@@ -354,7 +354,7 @@ With query rewrite read the **materialized view** :
 
 ![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.003.png)
 
-No query rewrite: Read flights (86mio rows) and airlines (1.5k rows) with merge join, group and sort
+No query rewrite: Read flights (86M rows) and airlines (1.5k rows) with merge join, group and sort
 
 ![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.004.png)
 

@@ -4,6 +4,15 @@
 
 Analyze Stored Data
 
+### Table of Contents
+- [Lab 1 - Create Database](#lab-1---create-database)
+- [Lab 2 - External Tables](#lab-2---external-tables)
+- [Lab 3 - Managed Tables](#lab-3---managed-tables)
+- [Lab 4 - Materialized View](#lab-4---materialized-views)
+- [Lab 5 - Slowly Changing Dimensions (SCD) Type 2](#lab-5---slowly-changing-dimensions-scd-type-2)
+- [Lab 6 - Data Security & Governance](#lab-6---data-security--governance)
+- [Lab 7 - Cloudera Data Visualization](#lab-7---cloudera-data-visualization)
+
 ## Introduction
 This workshop gives you an overview of how to use the Cloudera Data Warehouse service to quickly explore raw data, create curated versions of the data for reporting and dashboarding, and then scale up usage of the curated data by exposing it to more users. It highlights the performance and automation capabilities that help ensure performance is maintained while controlling cost.  
 
@@ -241,7 +250,7 @@ Check the cache metrics again to see the improved hit rate.
 
 
 -----
-## Lab 4 - Materialized View
+## Lab 4 - Materialized Views
 
 *Do all these steps in your **hol\_\*\*** database unless otherwise noted.*
 
@@ -347,7 +356,7 @@ No query rewrite: Read flights (86M rows) and airlines (1.5k rows) with merge jo
 ![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.004.png)
 
 ------
-## Lab 5 - Slowly Changing Dimensions (SCD) - TYPE 2
+## Lab 5 - Slowly Changing Dimensions (SCD) Type 2
 
 ![](images/Aspose.Words.10bb90cf-0d99-47f3-a995-23ef2b90be86.005.png)
 
@@ -436,7 +445,7 @@ Results
 
 
 -----
-## Lab 6 - Data Security & Governance 
+## Lab 6 - Data Security & Governance
 
 The combination of the Data Warehouse with SDX offers powerful features
 like rule-based removal or masking of columns, or rule-based row filtering,

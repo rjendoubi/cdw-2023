@@ -302,12 +302,11 @@ added.
 
 ```sql
 INSERT INTO flights_orc
-  SELECT 15 as month,
-    dayofmonth, dayofweek, deptime, crsdeptime, arrtime, crsarrtime,
+  SELECT `dayofmonth`, `dayofweek`, deptime, crsdeptime, arrtime, crsarrtime,
     uniquecarrier, flightnum, tailnum, actualelapsedtime, crselapsedtime,
     airtime, arrdelay, depdelay, origin, dest, distance, taxiin, taxiout,
     cancelled, cancellationcode, diverted, carrierdelay, weatherdelay,
-    nasdelay, securitydelay, lateaircraftdelay
+    nasdelay, securitydelay, lateaircraftdelay, 15 as `month`
 FROM flights_csv LIMIT 1000;
 ```
 

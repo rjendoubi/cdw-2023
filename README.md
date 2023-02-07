@@ -257,12 +257,13 @@ Check the cache metrics again to see the improved hit rate.
 Create a materialized view (MV). This will cause Hive to transparently
 rewrite queries, when possible, to use the MV instead of the base tables.
 
-Add constraints for more efficient query and refresh.
+First, add constraints for more efficient query and refresh.
 
 ```sql
 ALTER TABLE airlines_orc ADD CONSTRAINT airlines_pk PRIMARY KEY (code) DISABLE NOVALIDATE;
 ALTER TABLE flights_orc ADD CONSTRAINT airlines_fk FOREIGN KEY (uniquecarrier) REFERENCES airlines_orc(code) DISABLE NOVALIDATE RELY;
 ```
+
 ### Create Materialized View
 ```sql
 DROP MATERIALIZED VIEW IF EXISTS traffic_cancel_airlines;
@@ -283,49 +284,47 @@ database name).
 SHOW MATERIALIZED VIEWS in hol_**;
 ```
 
-
 ### Incrementally refresh the Materialized View
 
 *Do all these steps in your **hol\_\*\*** database unless otherwise noted.*
 
-First create a table for incremental data 
+In order to demonstrate refreshing the MV, we need to add "new" data to the
+underlying `flights_orc` table.
+
+For convenience here, we are going select 1,000 rows out of our original
+`flights_csv` and _pretend_ this is new data. For demonstration purposes,
+we will specify a different `month`, so that this data ends up in a new
+partition.
+
+You may run a quick `SELECT COUNT(*) FROM flights_orc` before and after
+running the next code listing, to verify that 1,000 new records have been
+added.
 
 ```sql
-
-drop table if exists flights_orc_incr;
-
-create table flights_orc_incr
-(dayofmonth int, dayofweek int, deptime int, crsdeptime int, arrtime int, 
- crsarrtime int, uniquecarrier string, flightnum int, tailnum string, 
- actualelapsedtime int, crselapsedtime int, airtime int, arrdelay int, 
- depdelay int, origin string, dest string, distance int, taxiin int, 
- taxiout int, cancelled int, cancellationcode string, diverted string, 
- carrierdelay int, weatherdelay int, nasdelay int, securitydelay int, 
- lateaircraftdelay int)
-PARTITIONED BY (month int);
-```
-Now insert 1000 records as a new month 
-
-```sql
-
-insert into flights_orc_incr select 15 as month, dayofmonth, dayofweek, deptime, crsdeptime, arrtime, crsarrtime, uniquecarrier, flightnum, tailnum, actualelapsedtime, crselapsedtime, airtime, arrdelay, depdelay, origin, dest, distance, taxiin, taxiout, cancelled, cancellationcode, diverted, carrierdelay, weatherdelay, nasdelay, securitydelay, lateaircraftdelay 
-from flights_orc limit 1000;
-```
-
-Insert the new data into fact table
-
-```sql
-INSERT into flights_orc select * from flights_orc_incr;
+INSERT INTO flights_orc
+  SELECT 15 as month,
+    dayofmonth, dayofweek, deptime, crsdeptime, arrtime, crsarrtime,
+    uniquecarrier, flightnum, tailnum, actualelapsedtime, crselapsedtime,
+    airtime, arrdelay, depdelay, origin, dest, distance, taxiin, taxiout,
+    cancelled, cancellationcode, diverted, carrierdelay, weatherdelay,
+    nasdelay, securitydelay, lateaircraftdelay
+FROM flights_csv LIMIT 1000;
 ```
 
 Update materialized view
 
 ```sql
-USE hol_**;
 ALTER MATERIALIZED VIEW traffic_cancel_airlines REBUILD;
 ```
 
-Run dashboard query again to explore the usage of the MV. 
+Next, we will run the same query twice, in order to demonstrate the
+difference in behaviour in the Query Planner when query rewriting based
+on MVs is enabled vs disabled.
+
+MV query rewriting is enabled by default. Run the following query, then
+check the Visual Explain tab in the Job/Query browser. You will see that
+the Query Planner chose to use the MV for efficiency, _even though_ the
+MV itself is not explicitly included in the query.
 
 ```sql
 SET hive.query.results.cache.enabled=false;
